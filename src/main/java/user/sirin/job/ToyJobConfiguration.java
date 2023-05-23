@@ -25,14 +25,14 @@ public class ToyJobConfiguration {
     @Bean
     public Job job() {
         return jobBuilderFactory.get("toyJob")
-            .start(step1())
-            .next(step2())
+            .start(toyStep1())
+            .next(toyStep2())
             .build();
     }
 
     @Bean
-    public Step step1() {
-        return stepBuilderFactory.get("step")
+    public Step toyStep1() {
+        return stepBuilderFactory.get("toyStep1")
             .tasklet(((contribution, chunkContext) -> {
                 log.info("toy step start");
                 return RepeatStatus.FINISHED;
@@ -41,8 +41,8 @@ public class ToyJobConfiguration {
     }
 
     @Bean
-    public Step step2() {
-        return stepBuilderFactory.get("step2")
+    public Step toyStep2() {
+        return stepBuilderFactory.get("toyStep2")
             .<String, String>chunk(5)
             .reader(() -> null)
             .processor((ItemProcessor<String, String>) item -> null)

@@ -25,9 +25,9 @@ public class FlowJobConfiguration {
     public Job flowJob() {
         return jobBuilderFactory.get("flowJob")
             .start(flow1())
-            .next(step3())
+            .next(flowStep3())
             .next(flow2())
-            .next(step6())
+            .next(flowStep6())
             .end()
             .build();
     }
@@ -35,22 +35,22 @@ public class FlowJobConfiguration {
     @Bean
     public Flow flow1() {
         FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow1");
-        return flowBuilder.start(step1())
-            .next(step2())
+        return flowBuilder.start(flowStep1())
+            .next(flowStep2())
             .end();
     }
 
     @Bean
     public Flow flow2() {
         FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow2");
-        return flowBuilder.start(step4())
-            .next(step5())
+        return flowBuilder.start(flowStep4())
+            .next(flowStep5())
             .end();
     }
 
     @Bean
-    public Step step1() {
-        return stepBuilderFactory.get("step1")
+    public Step flowStep1() {
+        return stepBuilderFactory.get("flowStep1")
             .allowStartIfComplete(true)
             .tasklet((ct, ch) -> {
                 log.info("step 1 start");
@@ -60,8 +60,8 @@ public class FlowJobConfiguration {
     }
 
     @Bean
-    public Step step2() {
-        return stepBuilderFactory.get("step2")
+    public Step flowStep2() {
+        return stepBuilderFactory.get("flowStep2")
             .tasklet((ct, ch) -> {
                 log.info("step 2 start");
                 return RepeatStatus.FINISHED;
@@ -70,8 +70,8 @@ public class FlowJobConfiguration {
     }
 
     @Bean
-    public Step step3() {
-        return stepBuilderFactory.get("step3")
+    public Step flowStep3() {
+        return stepBuilderFactory.get("flowStep3")
             .tasklet((ct, ch) -> {
                 log.info("step 3 start");
                 return RepeatStatus.FINISHED;
@@ -80,8 +80,8 @@ public class FlowJobConfiguration {
     }
 
     @Bean
-    public Step step4() {
-        return stepBuilderFactory.get("step4")
+    public Step flowStep4() {
+        return stepBuilderFactory.get("flowStep4")
             .tasklet((ct, ch) -> {
                 log.info("step 4 start");
                 return RepeatStatus.FINISHED;
@@ -90,8 +90,8 @@ public class FlowJobConfiguration {
     }
 
     @Bean
-    public Step step5() {
-        return stepBuilderFactory.get("step5")
+    public Step flowStep5() {
+        return stepBuilderFactory.get("flowStep5")
             .tasklet((ct, ch) -> {
                 log.info("step 5 start");
                 return RepeatStatus.FINISHED;
@@ -100,8 +100,8 @@ public class FlowJobConfiguration {
     }
 
     @Bean
-    public Step step6() {
-        return stepBuilderFactory.get("step6")
+    public Step flowStep6() {
+        return stepBuilderFactory.get("flowStep6")
             .tasklet((ct, ch) -> {
                 log.info("step 6 start");
                 return RepeatStatus.FINISHED;
