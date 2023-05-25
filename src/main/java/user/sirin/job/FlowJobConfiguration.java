@@ -8,6 +8,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ public class FlowJobConfiguration {
     @Bean
     public Job flowJob() {
         return jobBuilderFactory.get("flowJob")
+            .incrementer(new RunIdIncrementer())
             .start(flow1())
             .next(flowStep3())
             .next(flow2())
