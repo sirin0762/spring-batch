@@ -12,6 +12,7 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.file.transform.Range;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -71,18 +72,34 @@ public class FlatFileItemReaderConfiguration {
 //        return itemReader;
 //    }
 
+//    @Bean
+//    public ItemReader<Customer> itemReader() {
+//        return new FlatFileItemReaderBuilder<Customer>()
+//            .name("flatFile")
+//            .resource(new ClassPathResource("/customer.csv"))
+////            .fieldSetMapper(new CustomerFieldSetMapper())
+//            .fieldSetMapper(new BeanWrapperFieldSetMapper<>())
+//            .targetType(Customer.class)
+//            .linesToSkip(1)
+////            .lineTokenizer(new DelimitedLineTokenizer())
+//            .delimited().delimiter(",")
+//            .names("name", "age", "year")
+//            .build();
+//    }
+
     @Bean
     public ItemReader<Customer> itemReader() {
         return new FlatFileItemReaderBuilder<Customer>()
             .name("flatFile")
-            .resource(new ClassPathResource("/customer.csv"))
-//            .fieldSetMapper(new CustomerFieldSetMapper())
+            .resource(new ClassPathResource("/customer2.csv"))
             .fieldSetMapper(new BeanWrapperFieldSetMapper<>())
             .targetType(Customer.class)
             .linesToSkip(1)
-//            .lineTokenizer(new DelimitedLineTokenizer())
-            .delimited().delimiter(",")
-            .names("name", "age", "year")
+            .fixedLength()
+            .addColumns(new Range(1, 5))
+            .addColumns(new Range(6, 7))
+            .addColumns(new Range(8, 11))
+            .names("name", "year", "age")
             .build();
     }
 
