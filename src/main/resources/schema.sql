@@ -1,6 +1,7 @@
 CREATE TABLE customer
 (
-    name    VARCHAR(255)                 PRIMARY KEY,
+    id      BIGINT          NOT NULL        PRIMARY KEY,
+    name    VARCHAR(255),
     age     INT          DEFAULT NULL,
     year    VARCHAR(255)
 );
