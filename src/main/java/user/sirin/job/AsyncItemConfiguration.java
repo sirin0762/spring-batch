@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import user.sirin.job.domain.Customer;
+import user.sirin.job.listenter.StopWatchJobListener;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -39,14 +40,16 @@ public class AsyncItemConfiguration {
     @Bean
     public Job asyncItemJob() {
         return jobBuilderFactory.get("asyncItemJob")
-            .start(syncItemStep())
-            .next(asyncItemStep())
+            .listener(new StopWatchJobListener())
+//            .start(syncItemStep())
+            .start(asyncItemStep())
             .build();
     }
 
     @Bean
     public Step syncItemStep() {
         return stepBuilderFactory.get("syncItemStep")
+            .allowStartIfComplete(true)
             .<Customer, Customer>chunk(100)
             .reader(pagingItemReader())
             .processor(customeItemProcessor())
@@ -57,6 +60,7 @@ public class AsyncItemConfiguration {
     @Bean
     public Step asyncItemStep() {
         return stepBuilderFactory.get("asyncItemStep")
+            .allowStartIfComplete(true)
             .<Customer, Future<Customer>>chunk(100)
             .reader(pagingItemReader())
             .processor(asyncItemProcessor())
@@ -85,6 +89,7 @@ public class AsyncItemConfiguration {
     public ItemReader<Customer> pagingItemReader() {
         return new JdbcPagingItemReaderBuilder<Customer>()
             .dataSource(dataSource)
+            .name("pagingItemReader")
             .fetchSize(300)
             .rowMapper(new BeanPropertyRowMapper<>(Customer.class))
             .queryProvider(createQueryProvider())
@@ -93,14 +98,22 @@ public class AsyncItemConfiguration {
 
     @Bean
     public ItemProcessor<Customer, Customer> customeItemProcessor() {
-        return item -> new Customer(item.getId(), item.getName().toUpperCase(), item.getAge(), item.getYear());
+        return item -> {
+            try {
+                Thread.sleep(10);
+                log.info("Thread.currentThread().getId() : {}", Thread.currentThread().getId());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return new Customer(item.getId(), item.getName().toUpperCase(), item.getAge(), item.getYear());
+        };
     }
 
     @Bean
     public ItemWriter<Customer> customItemWriter() {
         return new JdbcBatchItemWriterBuilder<Customer>()
             .dataSource(dataSource)
-            .sql("insert into customer2 values (:id, :firstName, :lastName), :birthdate")
+            .sql("insert into customer2 values (:id, :name, :age, :year)")
             .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
             .build();
     }

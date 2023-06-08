@@ -9,7 +9,4 @@ spring:
       initialize-schema: always
   sql:
     init:
-      mode: never
-  jpa:
-    hibernate:
-      ddl-auto: validate
+      mode: always
